@@ -1,0 +1,2 @@
+# FoldingLineHider
+FoldingLineHider notepad++ plugin
