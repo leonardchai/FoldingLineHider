@@ -139,6 +139,18 @@ bool setCommand(size_t index, TCHAR *cmdName, PFUNCPLUGINCMD pFunc, ShortcutKey 
 //-- STEP 4. DEFINE YOUR ASSOCIATED FUNCTIONS --//
 //----------------------------------------------//
 
+void setFoldingStyle(HWND wndHandle, bool shouldBeHidden)
+{
+    if (shouldBeHidden)
+    {
+        LPARAM blackAndTransparentColor = 0; // RGBA(0,0,0,0)
+		::SendMessage(wndHandle, SCI_SETELEMENTCOLOUR, SC_ELEMENT_FOLD_LINE, blackAndTransparentColor);
+    }
+    else
+    {
+		::SendMessage(wndHandle, SCI_RESETELEMENTCOLOUR, SC_ELEMENT_FOLD_LINE, 0);
+    }
+}
 void toggleFoldingLineVisibility()
 {
     configData.isFoldingLineHidden = configData.isFoldingLineHidden ? 0 : 1;
@@ -146,11 +158,11 @@ void toggleFoldingLineVisibility()
 
     ::SendMessage(nppData._nppHandle, NPPM_SETMENUITEMCHECK, funcItem[0]._cmdID, configData.isFoldingLineHidden);
 
-    LPARAM flag = configData.isFoldingLineHidden ? 0 : SC_FOLDFLAG_LINEAFTER_CONTRACTED;
     if (nppData._scintillaMainHandle != 0)
-        ::SendMessage(nppData._scintillaMainHandle, SCI_SETFOLDFLAGS, flag, 0);
+        setFoldingStyle(nppData._scintillaMainHandle, configData.isFoldingLineHidden);
+
     if (nppData._scintillaSecondHandle != 0)
-        ::SendMessage(nppData._scintillaSecondHandle, SCI_SETFOLDFLAGS, flag, 0);
+    	setFoldingStyle(nppData._scintillaSecondHandle, configData.isFoldingLineHidden);
 }
 
 void collapseCurrentLevel()
@@ -166,7 +178,7 @@ void uncollapseCurrentLevel()
 void about()
 {
     ::MessageBox(nppData._nppHandle,
-        TEXT("FoldingLineHider v1.0\n\nby leonardchai@gmail.com"),
+        TEXT("FoldingLineHider v1.1\n\nby leonardchai@gmail.com"),
         TEXT("About..."), MB_OK);
 }
 
